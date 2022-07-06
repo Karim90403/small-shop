@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <link href="https://fonts.googleapis.com/css2?family=Bitter:wght@300&family=M+PLUS+Rounded+1c&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="magnific-popup/magnific-popup.css">
+    <script src="https://unpkg.com/vue@3"></script>
+    <title>shop(first lesson)</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: 'M PLUS Rounded 1c', sans-serif;
+            background-color: #282522;
+            font-weight: 100;
+        }
+
+        *,
+        *:before *:after {
+            box-sizing: border-box;
+        }
+
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6 {
+            margin: 0;
+        }
+
+        hr {
+            display: block;
+            width: 100%;
+            height: 1px;
+            margin: 40px 0;
+
+            border: 0;
+        }
+
+        button {
+            cursor: pointer;
+        }
+
+        .basket_button {
+            position: absolute;
+            right: 10px;
+            top: 10px;
+            color: #282522;
+            width: 5%;
+            text-decoration: none;
+            cursor: pointer;
+            background-color: #fff;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 0 10px #000;
+        }
+
+        .basket_button img {
+            width: 100%;
+            float: right;
+        }
+
+        .basket {
+            position: fixed;
+            right: .1%;
+            top: 10%;
+            background-color: #282522;
+            border: 1px solid #282522;
+            border-radius: 10px;
+            padding: 20px;
+            width: 18%;
+            overflow: hidden;
+            height: auto;
+            box-shadow: 0 0 10px #000;
+        }
+
+        .empty_cart {
+            font-size: 110%;
+            display: flex;
+            justify-content: center;
+            color: #fff;
+        }
+
+        .basket_block {
+            position: relative;
+            width: 120%;
+            height: 65px;
+            margin-left: -10%;
+            margin-top: -20px;
+            margin-bottom: 20px;
+            overflow: hidden;
+            box-shadow: 0 0 10px #000;
+        }
+
+        .basket_block img {
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: -1;
+            transform: translateY(-40%);
+        }
+
+        .basket_block_name {
+            position: absolute;
+            top: 25%;
+            left: 5%;
+            width: 50%;
+            color: #fff;
+            font-size: 80%;
+        }
+
+        .basket_cost {
+            position: absolute;
+            right: 12%;
+            top: 35%;
+            color: #fff;
+            font-size: 80%
+        }
+
+        .basket_image {
+            position: absolute;
+            right: 5%;
+            top: 47%;
+            width: 4%;
+            z-index: 2;
+        }
+
+        .itogo {
+            display: flex;
+            justify-content: center;
+            margin-top: -2%;
+            margin-bottom: 13%;
+            font-size: 110%;
+            color: #fff;
+        }
+
+        .itogo_button {
+            position: absolute;
+            display: flex;
+            justify-content: center;
+            margin-top: 24%;
+            border-radius: 40px;
+            color: #000;
+            font-size: 80%;
+            text-decoration: none;
+            background: #fff;
+            outline: none;
+            padding: .04em .5em;
+            border: 1px solid #fff;
+            box-shadow: 0 0 10px #000;
+        }
+
+        .cell_image img {
+            width: 100%;
+            border-radius: 20px;
+            cursor: pointer;
+        }
+
+        .cell_name {
+            font-size: 100%;
+            height: 45px;
+            line-height: 20px;
+            overflow: hidden;
+        }
+
+        .cell {
+            color: #fff;
+            display: inline-block;
+            margin-top: 3%;
+            width: 19%;
+            height: auto;
+            transition: 1s;
+            margin-left: 5%;
+        }
+
+        .cell_cost {
+            font-size: 110%;
+            margin-left: 70%;
+        }
+
+        .cell_choose {
+            position: absolute;
+            margin-top: -.2%;
+            box-shadow: 0 0 10px #000;
+            border-radius: 40px;
+            font-size: 100%;
+            color: #000;
+            text-decoration: none;
+            background: #fff;
+            padding: .0001em .5em;
+            outline: none;
+            border: 2px solid #fff;
+            cursor: pointer;
+        }
+
+        .inline {
+            display: inline;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="app">
+        <a href="#basket" class="basket_button popup-link">
+            <img src="Images/basket_icon.png">
+            Товаров:{{basket.length}}
+        </a>
+        <div id="basket" class="mfp-hide">
+            <div class="basket">
+                <div v-if="basket.length > 0">
+                    <div v-for="item in basket" :key="item.name">
+                        <div class="basket_block">
+                            <img src="Images/кэш.jpg" width="25%">
+                            <div class="basket_block_name">{{item.name}}</div>
+                            <div class="basket_cost">{{item.count}}x{{item.cost}}p</div>
+                            <a href="#" @click="removeItem(item)" class="basket_image"><img src="Images/delete.png" width="10%"></a>
+                        </div>
+                    </div>
+                    <div class="itogo">
+                        <div class="itogo">Итого: {{totalPrice}} р</div>
+                        <a href="step1.html" class="itogo_button">Оформить заказ</a>
+                    </div>
+                </div>
+                <div v-else class="empty_cart">Вы пока ничего не доавили</div>
+            </div>
+        </div>
+
+        <div v-for="item in showcase" :key="item.name" @submit.prevent="addItem" class="cell">
+            <div class="cell_image"><img src="Images/кэш.jpg"></div>
+            <div class="cell_name">{{item.name}}</div>
+            <div class="cell_choose" @click="addToBasket(item)">Выбрать</div>
+            <div class="cell_cost">{{item.cost}}p</div>
+        </div>
+    </div>
+
+    <script>
+        const { createApp } = Vue
+        let id = 0
+        createApp({
+            data() {
+                return {
+                    showcase: [
+                        { id: id++, name: 'Шашлык из курицы на косточке', cost: 230 },
+                        { id: id++, name: 'Шашлык из куринной печени в жировой сетке', cost: 140 },
+                        { id: id++, name: 'Шашлык из говяжьей печени в жировой сетке', cost: 200 },
+                        { id: id++, name: 'Шашлык из свинины на косточке', cost: 180 },
+                        { id: id++, name: 'Шашлык из свинной печени в жировой сетке', cost: 250 },
+                        { id: id++, name: 'Люля из говядины', cost: 300 }
+                    ],
+                    basket: []
+                }
+            },
+            methods: {
+                addToBasket(item) {
+                    let { id, name, cost } = item
+                    let ci = this.basket.filter(x => x.name == name)
+                    if (this.basket.length > 0) {
+                        if (ci.length > 0) {
+                            this.basket.forEach(x => {
+                                x.name == name ? x.count += 1 : 0
+                            })
+                        }
+                        else { this.basket.push({ id, name, cost, count: 1 }); }
+                    } else { this.basket.push({ id, name, cost, count: 1 }); }
+
+                },
+                removeItem(item) {
+                    this.basket = this.basket.filter((t) => t !== item)
+                },
+            },
+            computed: {
+                totalPrice() {
+                    let p = 0;
+                    this.basket.map(x => p += Number(x.cost*x.count));
+                    return p
+                }
+            }
+        }).mount('#app')
+    </script>
+
+    <script src="gQuerry-3.5.1.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('.popup-link').magnificPopup();
+            closeOnBgClick: true;
+        });
+    </script>
+    <script>
+        $(document).ready(function () {
+            $('.minus').click(function () {
+                var $input = $(this).parent().find('input');
+                var count = parseInt($input.val()) - 1;
+                count = count < 1 ? 1 : count;
+                $input.val(count);
+                $input.change();
+                return false;
+            });
+            $('.plus').click(function () {
+                var $input = $(this).parent().find('input');
+                $input.val(parseInt($input.val()) + 1);
+                $input.change();
+                return false;
+            });
+        });
+    </script>
+    <script src="magnific-popup/magnific-popup.js"></script>
+</body>
+
+</html>
